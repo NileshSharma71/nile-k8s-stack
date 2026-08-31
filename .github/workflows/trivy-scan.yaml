@@ -1,0 +1,30 @@
+name: Phase 4 - Trivy Security Scan
+
+on:
+  push:
+    branches: [ "main", "feature/*" ]
+  workflow_dispatch:
+
+jobs:
+  trivy-security-audit:
+    name: Shift-Left Vulnerability Scanner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: IaC Scan (Kubernetes Manifests)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: 'kubernetes/'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          
+      - name: Container Image Scan (OWASP Juice Shop)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'bkimminich/juice-shop:latest'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: 0  #because the juice shop is intentional vulnerable
