@@ -1,0 +1,6 @@
+driver:
+  kind: modern_ebpf
+tty: true
+falco:
+  json_output: true
+  json_include_output_property: true
