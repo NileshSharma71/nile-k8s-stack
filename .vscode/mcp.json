@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "kubernetes": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--network",
+        "host",
+        "--mount",
+        "type=bind,src=/tmp/mcp-kubeconfig,dst=/home/mcp/.kube/config,readonly",
+        "ghcr.io/feiskyer/mcp-kubernetes-server:latest"
+      ]
+    }
+  }
+}
