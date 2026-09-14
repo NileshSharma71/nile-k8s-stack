@@ -4,6 +4,9 @@ metadata:
   name: mcp-k8s-reader
   namespace: mcp-system
 
+# ============================================================
+# JUICE SHOP
+# ============================================================
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -18,19 +21,20 @@ rules:
       - services
       - events
       - configmaps
-    verbs:
-      - get
-      - list
-      - watch
+    verbs: [get, list, watch]
 
   - apiGroups: ["apps"]
     resources:
       - deployments
       - replicasets
-    verbs:
-      - get
-      - list
-      - watch
+    verbs: [get, list, watch]
+
+  - apiGroups: ["aquasecurity.github.io"]
+    resources:
+      - vulnerabilityreports
+      - configauditreports
+      - exposedsecretreports
+    verbs: [get, list, watch]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -47,6 +51,9 @@ roleRef:
   kind: Role
   name: mcp-k8s-reader
 
+# ============================================================
+# OBSERVABILITY
+# ============================================================
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -61,20 +68,22 @@ rules:
       - services
       - events
       - configmaps
-    verbs:
-      - get
-      - list
-      - watch
+    verbs: [get, list, watch]
 
   - apiGroups: ["apps"]
     resources:
       - deployments
       - replicasets
       - daemonsets
-    verbs:
-      - get
-      - list
-      - watch
+      - statefulsets
+    verbs: [get, list, watch]
+
+  - apiGroups: ["aquasecurity.github.io"]
+    resources:
+      - vulnerabilityreports
+      - configauditreports
+      - exposedsecretreports
+    verbs: [get, list, watch]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -82,6 +91,195 @@ kind: RoleBinding
 metadata:
   name: mcp-k8s-reader
   namespace: observability
+subjects:
+  - kind: ServiceAccount
+    name: mcp-k8s-reader
+    namespace: mcp-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mcp-k8s-reader
+
+# ============================================================
+# FALCO
+# ============================================================
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mcp-k8s-reader
+  namespace: falco
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - events
+      - configmaps
+    verbs: [get, list, watch]
+
+  - apiGroups: ["apps"]
+    resources:
+      - daemonsets
+      - deployments
+      - replicasets
+    verbs: [get, list, watch]
+
+  - apiGroups: ["aquasecurity.github.io"]
+    resources:
+      - vulnerabilityreports
+      - configauditreports
+      - exposedsecretreports
+    verbs: [get, list, watch]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mcp-k8s-reader
+  namespace: falco
+subjects:
+  - kind: ServiceAccount
+    name: mcp-k8s-reader
+    namespace: mcp-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mcp-k8s-reader
+
+# ============================================================
+# CHAOS MESH
+# ============================================================
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mcp-k8s-reader
+  namespace: chaos-mesh
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - events
+      - configmaps
+    verbs: [get, list, watch]
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+    verbs: [get, list, watch]
+
+  - apiGroups: ["chaos-mesh.org"]
+    resources:
+      - podchaos
+      - networkchaos
+      - stresschaos
+      - iochaos
+      - timechaos
+      - dnschaos
+      - httpchaos
+    verbs: [get, list, watch]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mcp-k8s-reader
+  namespace: chaos-mesh
+subjects:
+  - kind: ServiceAccount
+    name: mcp-k8s-reader
+    namespace: mcp-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mcp-k8s-reader
+
+# ============================================================
+# INGRESS NGINX
+# ============================================================
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mcp-k8s-reader
+  namespace: ingress-nginx
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - events
+      - configmaps
+    verbs: [get, list, watch]
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+    verbs: [get, list, watch]
+
+  - apiGroups: ["aquasecurity.github.io"]
+    resources:
+      - vulnerabilityreports
+      - configauditreports
+      - exposedsecretreports
+    verbs: [get, list, watch]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mcp-k8s-reader
+  namespace: ingress-nginx
+subjects:
+  - kind: ServiceAccount
+    name: mcp-k8s-reader
+    namespace: mcp-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mcp-k8s-reader
+
+# ============================================================
+# TRIVY SYSTEM
+# ============================================================
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mcp-k8s-reader
+  namespace: trivy-system
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - events
+      - configmaps
+    verbs: [get, list, watch]
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+    verbs: [get, list, watch]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mcp-k8s-reader
+  namespace: trivy-system
 subjects:
   - kind: ServiceAccount
     name: mcp-k8s-reader
