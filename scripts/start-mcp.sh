@@ -105,6 +105,7 @@ echo
 
 exec docker run -i --rm \
   --network host \
+  --env KUBECONFIG=/home/mcp/.kube/config \
   --mount type=bind,src="$MCP_KUBECONFIG",dst=/home/mcp/.kube/config,readonly \
   --mount type=bind,src="$MCP_CA",dst="$MCP_CA",readonly \
   "$MCP_IMAGE" \
